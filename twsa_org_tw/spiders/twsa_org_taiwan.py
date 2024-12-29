@@ -25,7 +25,7 @@ def get_xpath_text(text_div) -> str:
     return text
 
 
-def parse_text_to_dict(text: str, data_dict: dict) -> dict:\
+def parse_text_to_dict(text: str, data_dict: dict) -> dict:
     """
     Parses a given text string to extract key-value pairs, ensuring social media details are handled separately.
     Args:
