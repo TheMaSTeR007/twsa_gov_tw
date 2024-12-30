@@ -253,19 +253,20 @@ class TwsaOrgTaiwanSpider(scrapy.Spider):
 
     def close(self, reason):
         print('closing spider...')
-        print("Converting List of Dictionaries into DataFrame, then into Excel file...")
-        try:
-            print("Creating Native sheet...")
-            data_df = pd.DataFrame(self.final_data_list)
-            # data_df = df_cleaner(data_frame=data_df)  # Apply the function to all columns for Cleaning
-            data_df.insert(loc=0, column='id', value=range(1, len(data_df) + 1))  # Add 'id' column at position 1
-            # data_df.set_index(keys='id', inplace=True)  # Set 'id' as index for the Excel output
-            with pd.ExcelWriter(path=self.filename, engine='xlsxwriter', engine_kwargs={"options": {'strings_to_urls': False}}) as writer:
-                data_df.to_excel(excel_writer=writer, index=False)
+        if self.final_data_list:
+            print("Converting List of Dictionaries into DataFrame, then into Excel file...")
+            try:
+                print("Creating Native sheet...")
+                data_df = pd.DataFrame(self.final_data_list)
+                with pd.ExcelWriter(path=self.filename, engine='xlsxwriter', engine_kwargs={"options": {'strings_to_urls': False}}) as writer:
+                    data_df.insert(loc=0, column='id', value=range(1, len(data_df) + 1))  # Add 'id' column at position 1
+                    data_df.to_excel(excel_writer=writer, index=False)
 
-            print("Native Excel file Successfully created.")
-        except Exception as e:
-            print('Error while Generating Native Excel file:', e)
+                print("Native Excel file Successfully created.")
+            except Exception as e:
+                print('Error while Generating Native Excel file:', e)
+        else:
+            print('Final-Data-List is empty.')
         if self.api.is_connected:  # Disconnecting VPN if it's still connected
             self.api.disconnect()
             print('VPN Connected!' if self.api.is_connected else 'VPN Disconnected!')
